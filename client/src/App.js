@@ -56,8 +56,9 @@ function App() {
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       <BrowserRouter>
+      <body>
         <Header />
-        <main>
+        <div class="content">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route
@@ -95,7 +96,8 @@ function App() {
             {/* Можно добавить маршрут для админа позже, например /admin/* */}
             <Route path="*" element={<NavigateToLogin />} />
           </Routes>
-        </main>
+        </div>
+        </body>
       </BrowserRouter>
     </AuthContext.Provider>
   );
