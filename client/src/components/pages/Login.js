@@ -1,10 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { startLogin } from '../services/authService';
 import "./Login.css"
 
 const Login = () => {
-  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
