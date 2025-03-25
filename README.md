@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 README
+=======
+# segmentum
+>>>>>>> frontend
