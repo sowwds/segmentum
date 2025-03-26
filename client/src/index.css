@@ -2,6 +2,8 @@ body {
     background-color: #121212;
     color: #ffffff;
     min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 a {
@@ -50,3 +52,15 @@ a:hover::after{
     background-color: #333;
     transform: scale(1.1);
 }
+
+.white-cta-button {
+    background-color: white;
+    color: black;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 20px;
+    cursor: pointer;
+  }
