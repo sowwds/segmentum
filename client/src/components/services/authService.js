@@ -1,8 +1,11 @@
-import { login, getProfile, logout } from './api';
+import { getProfile, logout } from './api';
 
-export const startLogin = async () => {
-  const { data } = await login();
-  window.location.href = data.url; // Редирект на OAuth
+// Базовый URL бэкенда из переменных окружения
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/';
+
+export const startLogin = () => {
+  const authUrl = `${BASE_URL}/auth/google`; // Полный URL для редиректа
+  window.location.href = authUrl; // Редирект на OAuth-эндпоинт бэкенда
 };
 
 export const getUser = async () => {

@@ -18,7 +18,7 @@ const Login = () => {
     <div class="card">
         <h2>Вход в систему</h2>
         <p>Требуется авторизация через google</p>
-        <button class='cta-button' onClick={handleLogin}>Войти через OAuth</button>
+        <button class='cta-button' onClick={handleLogin()}>Войти через OAuth</button>
         <a class="support" href="mailto:support@example.com">Свяжитесь с поддержкой</a>
     </div>
   );
