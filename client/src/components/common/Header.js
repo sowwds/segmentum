@@ -66,9 +66,8 @@ const Header = () => {
     }
     };
 
-
-    const hamburgerBtn = React.createRef();
-    const mobileMenu = React.createRef();
+    const hamburgerBtn = React.useRef();
+    const mobileMenu = React.useRef();
 
     useEffect(() => {
         hamburgerBtn.current.addEventListener("click", function () {
@@ -100,7 +99,7 @@ const Header = () => {
             ) : (
                 <div class="button-container">
                     <button class="cta-button">Войти</button>
-                    <button class="hamburger" ref={hamburgerBtn}>
+                    <button class="hamburger" ref={el => {hamburgerBtn.current = el;}}>
                         <span></span>
                         <span></span>
                         <span></span>
@@ -110,9 +109,9 @@ const Header = () => {
         }
 
     </div>
-    <div class="mobile-menu" ref={mobileMenu}>
+    <div className="mobile-menu" ref={el => {mobileMenu.current = el;}}>
             {renderNavLinks()}
-            <div class="button-container">
+            <div className="button-container">
                 <button class="white-cta-button">Войти</button>
             </div>
         </div>
