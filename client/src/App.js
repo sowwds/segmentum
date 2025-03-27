@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react'; // Добавлен useContext
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Header from './components/common/Header';
 import Login from './components/pages/Login';
@@ -6,59 +6,66 @@ import Dashboard from './components/pages/Dashboard';
 import Projects from './components/pages/Projects';
 import { getUser } from './components/services/authService';
 
-// Создаем контекст для хранения данных пользователя
 export const AuthContext = createContext();
 
-// Компонент для защиты маршрутов
 const PrivateRoute = ({ children }) => {
-  const { user } = useContext(AuthContext); // Теперь useContext определен
+  const { user, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    if (!user && !localStorage.getItem('token')) {
+    if (!isLoading && !user && !localStorage.getItem('token')) {
+      console.log('PrivateRoute: Нет user и token, перенаправляем на /login');
       navigate('/login', { state: { from: location } });
     }
-  }, [user, navigate, location]);
+  }, [user, isLoading, navigate, location]);
+
+  if (isLoading) {
+    return <div>Загрузка...</div>; // Показываем индикатор загрузки
+  }
 
   return user ? children : null;
 };
 
 function App() {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Состояние загрузки
 
-  // Обработка токена из URL и загрузка профиля пользователя
   useEffect(() => {
     const fetchUser = async () => {
+      setIsLoading(true); // Начало загрузки
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
 
       if (token) {
-        localStorage.setItem('token', token); // Сохраняем токен из URL
-        window.history.replaceState({}, document.title, window.location.pathname); // Убираем token из URL
+        console.log('Токен из URL:', token);
+        localStorage.setItem('token', token);
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
 
       if (localStorage.getItem('token')) {
         try {
-          const userData = await getUser(); // Запрос профиля с токеном
+          console.log('Запрашиваем профиль пользователя с токеном:', localStorage.getItem('token'));
+          const userData = await getUser();
+          console.log('Профиль получен:', userData);
           setUser(userData);
         } catch (error) {
-          console.error('Ошибка загрузки профиля:', error);
+          console.error('Ошибка в fetchUser:', error);
           localStorage.removeItem('token');
           setUser(null);
         }
       }
+      setIsLoading(false); // Завершение загрузки
     };
 
     fetchUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, isLoading }}>
       <BrowserRouter>
-      <body>
         <Header />
-        <div class="content">
+        <div className="content">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route
@@ -93,17 +100,14 @@ function App() {
                 </PrivateRoute>
               }
             />
-            {/* Можно добавить маршрут для админа позже, например /admin/* */}
             <Route path="*" element={<NavigateToLogin />} />
           </Routes>
         </div>
-        </body>
       </BrowserRouter>
     </AuthContext.Provider>
   );
 }
 
-// Компонент для редиректа на логин при неизвестных маршрутах
 const NavigateToLogin = () => {
   const navigate = useNavigate();
   useEffect(() => {

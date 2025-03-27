@@ -1,25 +1,23 @@
 import React from 'react';
 import { startLogin } from '../services/authService';
-import "./Login.css"
+import './Login.css';
 
 const Login = () => {
-
-  const handleLogin = async () => {
-    try {
-      await startLogin(); // Редирект на OAuth-провайдера
-      // После успешного возврата с токеном бэкенд перенаправит на /dashboard
-    } catch (error) {
-      console.error('Ошибка при попытке входа:', error);
-      alert('Не удалось начать процесс входа. Попробуйте позже.');
-    }
+  const handleLogin = () => {
+    console.log('Кнопка нажата, вызываем startLogin');
+    startLogin();
   };
 
   return (
-    <div class="card">
-        <h2>Вход в систему</h2>
-        <p>Требуется авторизация через google</p>
-        <button class='cta-button' onClick={handleLogin()}>Войти через OAuth</button>
-        <a class="support" href="mailto:support@example.com">Свяжитесь с поддержкой</a>
+    <div className="card">
+      <h2>Вход в систему</h2>
+      <p>Требуется авторизация через Google</p>
+      <button className="cta-button" onClick={handleLogin}>
+        Войти через Google
+      </button>
+      <a className="support" href="mailto:support@example.com">
+        Свяжитесь с поддержкой
+      </a>
     </div>
   );
 };

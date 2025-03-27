@@ -2,7 +2,7 @@ import React, { useContext, useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../App'; // Предполагаем, что контекст определён в App.js
 import { logoutUser } from '../services/authService';
-import "./header.css"
+import "./header.css";
 
 const Header = () => {
     const { user, setUser } = useContext(AuthContext); // Данные пользователя из контекста
