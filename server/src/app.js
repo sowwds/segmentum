@@ -3,12 +3,23 @@
 const express = require('express');
 const session = require('express-session');
 const passport = require('./config/passport'); // Импорт настроенного Passport
-
+const cors = require('cors')
 const app = express();
 
 // Разбор JSON-тел запросов
 app.use(express.json());
 
+app.use(cors());
+
+// Если нужно настроить конкретные опции:
+
+const corsOptions = {
+  origin: 'http://localhost:3000', // Разрешаем запросы только с этого адреса (фронтенд)
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true, // Если нужно передавать куки
+  optionsSuccessStatus: 204
+};
+app.use(cors(corsOptions));
 
 // Настройка сессий (используем secret из переменных окружения)
 app.use(session({
