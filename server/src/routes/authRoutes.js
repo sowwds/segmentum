@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken'); // Импортируем jsonwebtoken
 const authController = require('../controllers/authController');
+const jwtAuth = require('../middlewares/jwtAuth'); // Импортируйте middleware для JWT
 
 // Инициализация входа через Google с нужным scope
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -11,20 +12,18 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 router.get('/google/callback', 
   passport.authenticate('google', { failureRedirect: '/auth/failure' }),
   (req, res) => {
-    // При успешной авторизации у нас есть объект пользователя в req.user
-    // Генерируем JWT-токен, подписанный нашим секретом
+    // Генерируем JWT-токен
     const token = jwt.sign(
       {
         id: req.user.id,
         email: req.user.email,
         role: req.user.role
       },
-      process.env.JWT_SECRET || 'default_jwt_secret', // используем переменную окружения
-      { expiresIn: '1h' } // срок действия токена (1 час, можно изменить по необходимости)
+      process.env.JWT_SECRET || 'default_jwt_secret',
+      { expiresIn: '1h' }
     );
 
-    // Перенаправляем пользователя на фронтенд, передавая токен в query-параметре
-    // Здесь предполагается, что фронтенд работает на http://localhost:3000
+    // Перенаправляем на фронтенд с токеном в query-параметре
     res.redirect(`http://localhost:3000/dashboard?token=${token}`);
   }
 );
@@ -34,8 +33,10 @@ router.get('/failure', (req, res) => {
   res.status(401).json({ message: "Authentication Failed" });
 });
 
-// Дополнительные маршруты для профиля и выхода (если нужны)
-router.get('/profile', authController.profile);
+// Защищённый маршрут профиля – теперь с middleware jwtAuth
+router.get('/profile', jwtAuth, authController.profile);
+
+// Маршрут для выхода (логики logout в JWT обычно сводится к удалению токена на клиенте)
 router.get('/logout', authController.logout);
 
 module.exports = router;
