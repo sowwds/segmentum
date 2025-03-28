@@ -14,6 +14,5 @@ export const getUser = async () => {
 };
 
 export const logoutUser = async () => {
-  await logout();
   localStorage.removeItem('token');
 };
