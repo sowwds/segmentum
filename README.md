@@ -39,3 +39,33 @@ docker-compose up --build
 ```
 docker-compose exec db psql -U postgres -d segmentum
 ```
+
+Создание таблиц в базе данных:
+```
+CREATE TABLE projects (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(200),
+  description TEXT,
+  department_id INTEGER,
+  company_user_id INTEGER,
+  status VARCHAR(50)
+);
+
+```
+CREATE TABLE applications (
+  id SERIAL PRIMARY KEY,
+  project_id INTEGER REFERENCES projects(id),
+  student_user_id INTEGER REFERENCES users(id),
+  status VARCHAR(50)
+);
+```
+```
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(100) UNIQUE,
+  role VARCHAR(50),
+  department_id INTEGER
+);
+
+```
