@@ -52,6 +52,7 @@ CREATE TABLE projects (
 );
 
 ```
+```
 CREATE TABLE applications (
   id SERIAL PRIMARY KEY,
   project_id INTEGER REFERENCES projects(id),
