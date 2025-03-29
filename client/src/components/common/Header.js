@@ -1,123 +1,137 @@
-import React, { useContext, useEffect} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../App'; // Предполагаем, что контекст определён в App.js
+import { AuthContext } from '../../App';
 import { logoutUser } from '../services/authService';
-import "./header.css";
+import './header.css';
 
 const Header = () => {
-    const { user, setUser } = useContext(AuthContext); // Данные пользователя из контекста
-    const navigate = useNavigate();
+  console.log('Компонент Header рендерится'); // Проверка рендера
 
-    const handleLogout = async () => {
+  const { user, setUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
     try {
-        await logoutUser(); // Вызов сервиса для выхода
-        setUser(null); // Очистка контекста
-        navigate('/login'); // Перенаправление на страницу входа
+      await logoutUser();
+      setUser(null);
+      navigate('/login');
     } catch (error) {
-        console.error('Ошибка при выходе:', error);
+      console.error('Ошибка при выходе:', error);
     }
-    };
+  };
 
-
-
-    // Условная навигация в зависимости от роли
-    const renderNavLinks = () => {
-
-        const commonLinks = (
-            <>
-            <a href="/dashboard">Главная</a>
-            <a href="/projects">Проекты</a>
-        </>
+  const renderNavLinks = () => {
+    console.log('renderNavLinks вызван, user =', user);
+    const commonLinks = (
+      <>
+        <a href="/dashboard">Главная</a>
+        <a href="/projects">Проекты</a>
+      </>
     );
-    if (!user) return (<>{commonLinks}</>);
 
+    if (!user) return commonLinks;
     switch (user.role) {
-        case 'student':
+      case 'student':
+        console.log("ПОЛУЧЕН ЮЗЕР STUDENT");
         return (
-            <>
+          <>
             {commonLinks}
-            <li className="nav-item">
-                <Link className="nav-link" to="/notifications">
+              <a href="/notifications">
                 Уведомления
-                {/* Предполагается, что у студента есть непрочитанные уведомления */}
                 {user.unreadNotifications > 0 && (
-                    <span className="badge bg-danger ms-1">{user.unreadNotifications}</span>
+                  <span>{user.unreadNotifications}</span>
                 )}
-                </Link>
-            </li>
-            </>
+              </a>
+          </>
         );
-        case 'company':
-        case 'head_of_department':
-            return commonLinks;
-        case 'admin':
-            return (
-                <>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/admin/users">Пользователи</Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/admin/projects">Проекты</Link>
-                    </li>
-                </>
-            );
-        default:
-            return null;
+      case 'company':
+        return commonLinks;
+      case 'head_of_department':
+        return commonLinks;
+      case 'admin':
+      default:
+        return null;
     }
-    };
+  };
 
-    const hamburgerBtn = React.useRef();
-    const mobileMenu = React.useRef();
+  const hamburgerBtn = React.useRef();
+  const mobileMenu = React.useRef();
+  const [HamburgerBtnVisible, setHamburgerBtnVisible] = useState(false)
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false)
+  useEffect(() => {
+    if (HamburgerBtnVisible && mobileMenuVisible) {
+        console.log("hamburger visible", hamburgerBtn.current);
+        const hamburger = hamburgerBtn.current;
+        const menu = mobileMenu.current;
+      const openMenu = () => {
+        console.log('Открываем меню');
+        menu.classList.add("open");
+        hamburger.classList.add("open");
+      };
 
-    useEffect(() => {
-        hamburgerBtn.current.addEventListener("click", function () {
-            mobileMenu.current.classList.add("open");
-            hamburgerBtn.current.classList.add("open");
-        });
+      const closeMenu = () => {
+        console.log('Закрываем меню');
+        menu.classList.remove("open");
+        hamburger.classList.remove("open");
+      };
 
-        mobileMenu.current.addEventListener("click", function () {
-            mobileMenu.current.classList.remove("open");
-            hamburgerBtn.current.classList.remove("open");
-        });
-    })
+      hamburger.addEventListener("click", openMenu);
+      menu.addEventListener("click", closeMenu);
 
+      return () => {
+        console.log('Очистка обработчиков событий');
+        hamburger.removeEventListener("click", openMenu);
+        menu.removeEventListener("click", closeMenu);
+      };
+    } else {
+      console.log('hamburger или menu отсутствуют');
+    }
+  }, [user, HamburgerBtnVisible, mobileMenuVisible]);
 
-    return (
+  return (
     <div>
-    <div class="header-container">
-        <div class="logo">
-            segmentum
-        </div>
-        <div class="desktop-nav">
-            {renderNavLinks()}
-        </div>
+      <div className="header-container">
+        <div className="logo">segmentum</div>
+        <div className="desktop-nav">{renderNavLinks()}</div>
         {user ? (
-                <div class="button-container">
-                    <span>{user.name}</span>
-                    <button class="cta-button" onClick={handleLogout}>Выйти</button>
-                </div>
-            ) : (
-                <div class="button-container">
-                    <button class="cta-button">Войти</button>
-                    <button class="hamburger" ref={el => {hamburgerBtn.current = el;}}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </button>
-                </div>
-            )
-        }
-
+          <div className="button-container">
+            <span>{user.name}</span>
+            <button className="cta-button" onClick={handleLogout}>
+              Выйти
+            </button>
+          </div>
+        ) : (
+          <div className="button-container">
+            <button className="cta-button" onClick={() => navigate('/login')}>
+              Войти
+            </button>
+          </div>
+        )}
+        <button className="hamburger" ref={el => {hamburgerBtn.current = el; setHamburgerBtnVisible(!!el);}}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+      </div>
+      <div className="mobile-menu" ref={el => {mobileMenu.current = el; setMobileMenuVisible(!!el);}}>
+        {renderNavLinks()}
+        {user ? (
+          <div className="button-container">
+            <span>{user.name}</span>
+            <button className="mobile-cta-button" onClick={handleLogout}>
+              Выйти
+            </button>
+          </div>
+        ) : (
+          <div className="button-container">
+            <button className="mobile-cta-button" onClick={() => navigate('/login')}>
+              Войти
+            </button>
+          </div>
+        )}
+      </div>
     </div>
-    <div className="mobile-menu" ref={el => {mobileMenu.current = el;}}>
-            {renderNavLinks()}
-            <div className="button-container">
-                <button class="white-cta-button">Войти</button>
-            </div>
-        </div>
-    </div>
-    );
+  );
 };
-
 
 export default Header;

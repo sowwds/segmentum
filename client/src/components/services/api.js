@@ -5,10 +5,18 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+    const token = localStorage.getItem('token');
+    console.log('Токен перед запросом:', token);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log('Заголовок Authorization установлен:', config.headers.Authorization);
+    } else {
+      console.log('Токен отсутствует в localStorage');
+    }
+    return config;
+  });
+
+
 
 export const login = () => api.get('/auth/oauthURL');
 export const getProfile = () => api.get('/auth/profile');
