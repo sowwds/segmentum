@@ -6,14 +6,16 @@ CREATE TABLE IF NOT EXISTS departments (
 );
 
 -- 2. Создаем таблицу пользователей (users) с полем description и ссылкой на departments
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS public.users (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100),
   email VARCHAR(100) UNIQUE,
   role VARCHAR(50),
   description TEXT,
-  department_id INTEGER REFERENCES departments(id)
+  department_id INTEGER REFERENCES departments(id),
+  google_id VARCHAR(255)
 );
+
 
 -- 3. Добавляем столбец head в таблицу departments и внешний ключ,
 --    ссылающийся на users.id (например, для заведующего кафедрой)

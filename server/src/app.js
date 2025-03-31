@@ -5,7 +5,7 @@ const session = require('express-session');
 const passport = require('./config/passport'); // Импорт настроенного Passport
 const cors = require('cors')
 const app = express();
-
+require('dotenv').config();
 // Разбор JSON-тел запросов
 app.use(express.json());
 
@@ -36,12 +36,13 @@ app.use(passport.session());
 const authRoutes = require('./routes/authRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 // Подключение маршрутов
 app.use('/auth', authRoutes);
 app.use('/projects', projectRoutes);
 app.use('/applications', applicationRoutes);
-
+app.use(userRoutes);
 // Базовый роут
 app.get('/', (req, res) => {
   res.send('Segmentum Backend is running');

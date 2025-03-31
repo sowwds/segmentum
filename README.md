@@ -90,3 +90,9 @@ CREATE TABLE IF NOT EXISTS applications (
   status VARCHAR(50)
 );
 ```
+
+Запрос POST:
+
+```
+http://localhost:5000/account?userId=0
+```
