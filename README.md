@@ -96,3 +96,10 @@ CREATE TABLE IF NOT EXISTS applications (
 ```
 http://localhost:5000/account?userId=0
 ```
+
+Чтобы всё работало, надо добавить элемент в departments:
+
+```
+INSERT INTO departments (id, name, description)
+VALUES (0, 'No Department', 'Пользователь без отдела');
+```
