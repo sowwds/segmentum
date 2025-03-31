@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS applications (
 );
 ```
 
-Запрос POST:
+Запрос GET:
 
 ```
 http://localhost:5000/account?userId=0
