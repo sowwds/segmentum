@@ -25,3 +25,9 @@ export const getProjects = (params) => api.get('/projects', { params });
 export const createProject = (data) => api.post('/projects', data);
 export const getProjectById = (id) => api.get(`/projects/${id}`);
 export const applyToProject = (id) => api.post(`/projects/${id}/apply`);
+export const testpost = () => api.post('/account/department', {
+      "userId": 1,
+      "department_id": 1,
+      "description": "Some department description"
+    }
+  );

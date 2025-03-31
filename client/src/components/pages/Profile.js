@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../App';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; // Предполагаем, что api.js экспортирует настроенный axios
-
+import { testpost } from '../services/api';
 
 const Profile = () => {
   const { user } = useContext(AuthContext); // Текущий авторизованный пользователь
@@ -56,7 +56,7 @@ const Profile = () => {
   if (!profileData) {
     return <div>Данные профиля недоступны</div>;
   }
-
+  testpost();
   return (
     <div className="profile-container">
       <h2>Профиль пользователя</h2>
