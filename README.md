@@ -40,33 +40,53 @@ docker-compose up --build
 docker-compose exec db psql -U postgres -d segmentum
 ```
 
-Создание таблиц в базе данных:
-```
-CREATE TABLE projects (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(200),
-  description TEXT,
-  department_id INTEGER,
-  company_user_id INTEGER,
-  status VARCHAR(50)
-);
+Докер автоматически создаёт базу данных, в которой находятся 4 sql таблицы следующего содержания:
+
+Таблица факультетов (departments) без столбца head (он добавится потом):
 
 ```
-```
-CREATE TABLE applications (
+CREATE TABLE IF NOT EXISTS departments (
   id SERIAL PRIMARY KEY,
-  project_id INTEGER REFERENCES projects(id),
-  student_user_id INTEGER REFERENCES users(id),
-  status VARCHAR(50)
+  name VARCHAR(100) NOT NULL,
+  description TEXT
 );
 ```
+
+Таблица пользователей (users) ссылается на departments:
+
 ```
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100),
   email VARCHAR(100) UNIQUE,
   role VARCHAR(50),
-  department_id INTEGER
+  description TEXT,
+  department_id INTEGER REFERENCES departments(id)
 );
+```
 
+Таблица проектов (projects):
+
+```
+CREATE TABLE IF NOT EXISTS projects (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(200),
+  description TEXT,
+  department_id INTEGER REFERENCES departments(id),
+  company_user_id INTEGER REFERENCES users(id),
+  status VARCHAR(50),
+  price BIGINT,              -- BIGINT соответствует типу "long int"
+  start_date DATE            -- Дата создания заявки
+);
+```
+
+Таблица заявок (applications):
+
+```
+CREATE TABLE IF NOT EXISTS applications (
+  id SERIAL PRIMARY KEY,
+  project_id INTEGER REFERENCES projects(id),
+  student_id INTEGER REFERENCES users(id),
+  status VARCHAR(50)
+);
 ```
