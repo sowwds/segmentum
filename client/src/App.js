@@ -4,6 +4,7 @@ import Header from './components/common/Header';
 import Login from './components/pages/Login';
 import Dashboard from './components/pages/Dashboard';
 import Projects from './components/pages/Projects';
+import Profile from './components/pages/Profile';
 import { getUser } from './components/services/authService';
 
 export const AuthContext = createContext();
@@ -97,6 +98,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Projects />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <Profile />
                 </PrivateRoute>
               }
             />

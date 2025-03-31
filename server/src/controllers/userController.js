@@ -3,6 +3,7 @@ const db = require('../config/db');
 // GET /account?userId=...
 // Возвращает информацию об аккаунте.
 // Если пользователь не найден, возвращаются дефолтные значения.
+
 exports.getAccount = async (req, res) => {
   // Если у вас настроен JWT‑middleware, можно получить userId из req.user.
   // Здесь для примера используем query-параметр.
@@ -38,8 +39,11 @@ exports.getAccount = async (req, res) => {
 // POST /account/department
 // Обновляет для пользователя поля department_id и description.
 // В теле запроса ожидаются: userId, department_id и description.
+// src/controllers/userController.js
+
 exports.updateDepartment = async (req, res) => {
   const { userId, department_id, description } = req.body;
+  console.log('Received updateDepartment:', req.body);
 
   if (!userId) {
     return res.status(400).json({ error: 'User id is required' });

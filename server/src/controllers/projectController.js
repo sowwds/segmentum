@@ -1,6 +1,10 @@
 const db = require('../config/db');
 
 // Контроллер для работы с проектами
+exports.updateDepartment = async (req, res) => {
+  console.log('Received POST /account/department with body:', req.body);
+  // ... остальной код ...
+};
 
 // Создание нового проекта (только для пользователей с ролью 'company')
 exports.createProject = async (req, res) => {

@@ -36,6 +36,7 @@ const Header = () => {
         return (
           <>
             {commonLinks}
+              <a href="/profile">Профиль</a>
               <a href="/notifications">
                 Уведомления
                 {user.unreadNotifications > 0 && (
