@@ -1,18 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../App';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Предполагаем, что api.js экспортирует настроенный axios
-import { testpost } from '../services/api';
+import { getAccount, updateAccount, getDepartments } from '../services/api'; // Импорт из api.js
+import './Profile.css';
 
 const Profile = () => {
-  const { user } = useContext(AuthContext); // Текущий авторизованный пользователь
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [profileData, setProfileData] = useState(null); // Данные профиля с бэкенда
-  const [loading, setLoading] = useState(true); // Состояние загрузки
-  const [error, setError] = useState(null); // Ошибка при запросе
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [description, setDescription] = useState(''); // Для редактирования описания
+  const [departmentId, setDepartmentId] = useState(''); // Для выбора отдела
+  const [isEditing, setIsEditing] = useState(false); // Режим редактирования
+  const [departments, setDepartments] = useState([]); // Динамический список отделов
 
-  // Функция для получения данных профиля
-  const fetchProfile = async () => {
+  // Функция для загрузки данных профиля и отделов
+  const fetchData = async () => {
     if (!user || !user.id) {
       setError('Пользователь не авторизован');
       setLoading(false);
@@ -21,30 +25,42 @@ const Profile = () => {
     }
 
     try {
-      const response = await axios.get(`/account?userId=${user.id}`, {
-        baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000', // Укажи правильный baseURL
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`, // Токен из localStorage
-        },
-      });
-      setProfileData(response.data);
+      const [profileResponse, deptResponse] = await Promise.all([
+        getAccount(user.id),
+        getDepartments(),
+      ]);
+      setProfileData(profileResponse.data);
+      setDescription(profileResponse.data.description || '');
+      setDepartmentId(profileResponse.data.department_id || '');
+      setDepartments(deptResponse.data); // Предполагаем, что бэкенд возвращает массив [{ id, name }, ...]
       setLoading(false);
     } catch (err) {
-      console.error('Ошибка при загрузке профиля:', err);
-      setError('Не удалось загрузить данные профиля');
+      console.error('Ошибка при загрузке данных:', err);
+      setError('Не удалось загрузить данные');
       setLoading(false);
       if (err.response?.status === 401) {
-        // navigate('/login'); // Перенаправление при неавторизованном доступе2
+        navigate('/login');
       }
     }
   };
 
-  // Загрузка данных при монтировании компонента
-  useEffect(() => {
-    fetchProfile();
-  }, [user]); // Зависимость от user, чтобы обновлять данные при его изменении
+  // Сохранение изменений профиля
+  const handleSave = async () => {
+    try {
+      await updateAccount(user.id, departmentId, description);
+      setProfileData({ ...profileData, description, department_id: departmentId });
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Ошибка при обновлении профиля:', err);
+      setError('Не удалось сохранить изменения');
+    }
+  };
 
-  // Рендеринг в зависимости от состояния
+  // Выполняем загрузку данных при монтировании компонента
+  useEffect(() => {
+    fetchData();
+  }, [user]);
+
   if (loading) {
     return <div>Загрузка...</div>;
   }
@@ -56,30 +72,75 @@ const Profile = () => {
   if (!profileData) {
     return <div>Данные профиля недоступны</div>;
   }
-  testpost();
+
   return (
-    <div className="profile-container">
+    <div className="card">
       <h2>Профиль пользователя</h2>
       <div className="profile-details">
         <p>
-          <strong>Имя:</strong> {profileData.name || 'Не указано'}
+          <label>Имя:</label> {profileData.name || 'Не указано'}
         </p>
         <p>
-          <strong>Email:</strong> {profileData.email}
+          <label>Email:</label> {profileData.email}
         </p>
         <p>
-          <strong>Роль:</strong> {profileData.role || 'Не указано'}
+          <label>Роль:</label> {profileData.role || 'Не указано'}
         </p>
-        <p>
-          <strong>Описание:</strong> {profileData.description || 'Нет описания'}
-        </p>
-        <p>
-          <strong>ID отдела:</strong> {profileData.department_id || 'Не привязан к отделу'}
-        </p>
+
+        {isEditing ? (
+          <>
+            <div>
+              <label>Описание:</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows="4"
+                cols="50"
+                placeholder="Введите описание"
+              />
+            </div>
+            <div>
+              <label>Отдел:</label>
+              <select
+                value={departmentId}
+                onChange={(e) => setDepartmentId(e.target.value)}
+              >
+                <option value="">Выберите отдел</option>
+                {departments.map((dept) => (
+                  <option key={dept.id} value={dept.id}>
+                    {dept.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="button-container">
+              <button className="cta-button" onClick={handleSave}>
+                Сохранить
+              </button>
+              <button
+                className="cta-button secondary"
+                onClick={() => setIsEditing(false)}
+              >
+                Отмена
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <p>
+              <label>Описание:</label> {profileData.description || 'Нет описания'}
+            </p>
+            <p>
+              <label>Отдел:</label>{' '}
+              {departments.find((d) => d.id === profileData.department_id)?.name ||
+                'Не привязан к отделу'}
+            </p>
+            <button className="cta-button" onClick={() => setIsEditing(true)}>
+              Редактировать
+            </button>
+          </>
+        )}
       </div>
-      <button className="cta-button" onClick={() => navigate('/dashboard')}>
-        Назад
-      </button>
     </div>
   );
 };
