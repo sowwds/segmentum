@@ -42,12 +42,3 @@ CREATE TABLE IF NOT EXISTS applications (
   student_id INTEGER REFERENCES users(id),
   status VARCHAR(50)
 );
-
--- 6. Добавляем тестовый проект 
-INSERT INTO projects (title, description, department_id, company_user_id, status, price, start_date)
-VALUES ('Test Project', 'This is a test project', 0, 1, 'pending', 1000, CURRENT_DATE)
-RETURNING id;
-
--- 7. Добавляем отдел для непричастных 
-INSERT INTO departments (id, name, description)
-VALUES (0, 'No Department', 'Пользователь без отдела');
