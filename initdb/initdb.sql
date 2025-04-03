@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS projects (
   department_id INTEGER REFERENCES departments(id),
   company_user_id INTEGER REFERENCES users(id),
   status VARCHAR(50),
-  price BIGINT,              -- BIGINT соответствует типу "long int"
-  start_date DATE            -- Дата создания заявки
+  price BIGINT,              
+  start_date DATE            
 );
 
 -- 5. Создаем таблицу заявок (applications)
