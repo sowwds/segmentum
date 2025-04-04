@@ -107,6 +107,7 @@ VALUES (0, 'No Department', 'Пользователь без отдела');
 Добавляем тестовый проект
 
 ```
-INSERT INTO departments (id, name, description)
-VALUES (0, 'No Department', 'Пользователь без отдела');
+INSERT INTO projects (title, description, department_id, company_user_id, status, price, start_date)
+VALUES ('Test Project', 'This is a test project', 0, 1, 'pending', 1000, CURRENT_DATE)
+RETURNING id;
 ```
