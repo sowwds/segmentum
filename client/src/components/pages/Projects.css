@@ -1,0 +1,84 @@
+.card {
+    margin: auto;
+    padding: 16px 24px;
+    border-radius: 15px;
+    background-color: #222;
+    max-width: 800px;
+    min-width:450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-details p,
+.application-details p {
+    margin: 10px 0;
+}
+
+.project-details textarea,
+.application-details textarea {
+    background-color: #333;
+    border-radius: 10px;
+    border: none;
+    color: #fff;
+    width: 100%;
+    height: 150px;
+    margin-top: 5px;
+    padding: 5px;
+    resize: none;
+    transition: border-color .25s ease, box-shadow .25s ease;
+}
+
+.project-details textarea:focus,
+.application-details textarea:focus {
+    border: 1px solid;
+    outline: 0;
+    border-color: #ddd;
+}
+
+.project-details select,
+.application-details select {
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+.project-details label,
+.application-details label {
+    color: #aaa;
+}
+
+.project-list {
+    width: 100%;
+    margin-top: 20px;
+    display: flex; /* Используем flex для сетки */
+    flex-wrap: wrap; /* Перенос элементов */
+    gap: 10px; /* Расстояние между элементами */
+}
+
+.project-item,
+.application-item {
+    background-color: #333;
+    border-radius: 10px;
+    padding: 10px;
+    flex: 1 1 calc(33.33% - 10px); /* Каждый элемент занимает треть ширины минус отступ */
+    min-width: 200px; /* Минимальная ширина для читаемости */
+    box-sizing: border-box;
+}
+
+.error {
+    color: red;
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+.button-container button {
+    width: 150px; /* Фиксированная ширина для всех кнопок */
+    text-align: center; /* Центрируем текст */
+}

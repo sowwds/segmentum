@@ -58,7 +58,7 @@ header {
     width: 100%;
     transition: width 0.3s;
 }
-.button-container {
+.button-container-header {
     display: flex;
     align-items: center;
     gap: 15px;

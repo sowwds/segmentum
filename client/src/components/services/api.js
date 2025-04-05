@@ -28,9 +28,13 @@ export const getProjectById = (id) => api.get(`/projects/${id}`);
 export const applyToProject = (project_id, student_id, status = 'pending') => {
     return api.post('/applications', { project_id, student_id, status });
   };
+export const updateProject = (id, data) => api.post(`/projects?id=${id}`, data); // Добавляем функцию редактирования
+
+
 
 // Заявки
 export const getApplications = (params = {}) => api.get('/applications', { params });
+export const approveApplication = (id) => api.post(`/applications?id=${id}`, { status: 'approved' }); // Предполагаем обновление статуса
 
 // Отделы
 export const getDepartments = () => api.get('/departments');

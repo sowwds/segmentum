@@ -37,18 +37,22 @@ const Header = () => {
           <>
             {commonLinks}
               <a href="/profile">Профиль</a>
-              <a href="/notifications">
-                Уведомления
-                {user.unreadNotifications > 0 && (
-                  <span>{user.unreadNotifications}</span>
-                )}
-              </a>
           </>
         );
       case 'company':
-        return commonLinks;
+        return (
+            <>
+              {commonLinks}
+                <a href="/profile">Профиль</a>
+            </>
+          );
       case 'head_of_department':
-        return commonLinks;
+        return (
+            <>
+              {commonLinks}
+                <a href="/profile">Профиль</a>
+            </>
+          );
       case 'admin':
       default:
         return null;
@@ -95,14 +99,14 @@ const Header = () => {
         <div className="logo">segmentum</div>
         <div className="desktop-nav">{renderNavLinks()}</div>
         {user ? (
-          <div className="button-container">
+          <div className="button-container-header">
             <span>{user.name}</span>
             <button className="cta-button" onClick={handleLogout}>
               Выйти
             </button>
           </div>
         ) : (
-          <div className="button-container">
+          <div className="button-container-header">
             <button className="cta-button" onClick={() => navigate('/login')}>
               Войти
             </button>
@@ -117,14 +121,14 @@ const Header = () => {
       <div className="mobile-menu" ref={el => {mobileMenu.current = el; setMobileMenuVisible(!!el);}}>
         {renderNavLinks()}
         {user ? (
-          <div className="button-container">
+          <div className="button-container-header">
             <span>{user.name}</span>
             <button className="mobile-cta-button" onClick={handleLogout}>
               Выйти
             </button>
           </div>
         ) : (
-          <div className="button-container">
+          <div className="button-container-header">
             <button className="mobile-cta-button" onClick={() => navigate('/login')}>
               Войти
             </button>
