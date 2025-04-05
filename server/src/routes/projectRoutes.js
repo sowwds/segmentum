@@ -12,5 +12,6 @@ router.get('/projects', async (req, res) => {
     return projectController.getAllProjects(req, res);
   }
 });
+router.post('/projects', projectController.createProject);
 
 module.exports = router;

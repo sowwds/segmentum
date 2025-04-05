@@ -40,11 +40,11 @@ const userRoutes = require('./routes/userRoutes');
 const departmentRoutes = require('./routes/departmentRoutes');
 
 // Подключение маршрутов
-app.use('/auth', authRoutes);                 //auth                         
-app.use(projectRoutes);                       //projects
-app.use(applicationRoutes);                   //applications
-app.use(userRoutes);                          //users
-app.use(departmentRoutes);                    //departments
+app.use('/auth', authRoutes);                 //auth (+)                        
+app.use(projectRoutes);                       //projects (POST NETU)
+app.use(applicationRoutes);                   //applications (GET NETU)
+app.use(userRoutes);                          //users (+)
+app.use(departmentRoutes);                    //departments (+)
 // Базовый роут
 app.get('/', (req, res) => {
   res.send('Segmentum Backend is running');

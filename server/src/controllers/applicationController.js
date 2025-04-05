@@ -20,3 +20,25 @@ exports.createApplication = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+// GET /applications
+// Возвращает список всех заявок из таблицы applications
+exports.getApplications = async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    if (userId) {
+      const result = await db.query(
+        'SELECT * FROM applications WHERE student_id = $1',
+        [userId]
+      );
+      return res.json(result.rows);
+    } else {
+      const result = await db.query('SELECT * FROM applications');
+      return res.json(result.rows);
+    }
+  } catch (err) {
+    console.error('Error fetching applications:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};

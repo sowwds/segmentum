@@ -11,5 +11,6 @@ const applicationController = require('../controllers/applicationController');
 //   "status": "pending"
 // }
 router.post('/applications', applicationController.createApplication);
+router.get('/applications', applicationController.getApplications);
 
 module.exports = router;
