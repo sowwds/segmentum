@@ -25,7 +25,7 @@ http://localhost:5000/account?userId=1
   "description": "",
   "department_id": 0
 }
-
+```
 ### POST /account/department
 **Description:**  
 Update the account with department information and description.
