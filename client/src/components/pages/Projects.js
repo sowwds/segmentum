@@ -81,10 +81,10 @@ const Projects = () => {
     }
   };
 
-  // Функция подачи заявки на проект
-  const handleApply = async (projectId) => {
+// Функция подачи заявки на проект
+const handleApply = async (projectId) => {
     try {
-      await applyToProject(projectId);
+      await applyToProject(projectId, user.id, 'pending'); // Передаем projectId, student_id и status
       alert('Заявка успешно подана!');
       // Обновляем список доступных проектов после подачи заявки
       const updatedProjects = availableProjects.filter((proj) => proj.id !== projectId);

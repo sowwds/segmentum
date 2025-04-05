@@ -22,13 +22,15 @@ export const getProfile = () => api.get('/auth/profile');
 export const logout = () => api.post('/auth/logout');
 
 // Проекты
-export const getProjects = (params = {}) => api.get('/projects', { params }); // Оставляем params для гибкости
+export const getProjects = (params = {}) => api.get('/projects', { params });
 export const createProject = (data) => api.post('/projects', data);
 export const getProjectById = (id) => api.get(`/projects/${id}`);
-export const applyToProject = (projectId) => api.post('/applications', { projectId }); // Изменяем на POST /applications
+export const applyToProject = (project_id, student_id, status = 'pending') => {
+    return api.post('/applications', { project_id, student_id, status });
+  };
 
 // Заявки
-export const getApplications = (params = {}) => api.get('/applications', { params }); // Добавляем получение заявок
+export const getApplications = (params = {}) => api.get('/applications', { params });
 
 // Отделы
 export const getDepartments = () => api.get('/departments');
