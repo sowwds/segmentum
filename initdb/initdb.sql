@@ -52,4 +52,4 @@ INSERT INTO public.users (name, email, role, description, department_id, google_
 VALUES ('D.O. LEVIEV', 'jir1488@bmstu.ru', 'pudge', 'Главная свиноматка улицы Бауманская', 0, 'dummy_google_id');
 
 INSERT INTO projects (title, description, department_id, company_user_id, status, price, start_date)
-VALUES ('Test Project', 'This is a test project', 0, 1, 'pending', 1000, CURRENT_DATE);
+VALUES ('Test Project', 'This is a test project', 0, 1, 'initialized', 1000, CURRENT_DATE);
