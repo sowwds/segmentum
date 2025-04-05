@@ -16,18 +16,25 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Аутентификация
 export const login = () => api.get('/auth/oauthURL');
 export const getProfile = () => api.get('/auth/profile');
 export const logout = () => api.post('/auth/logout');
-export const getProjects = (params) => api.get('/projects', { params });
+
+// Проекты
+export const getProjects = (params = {}) => api.get('/projects', { params }); // Оставляем params для гибкости
 export const createProject = (data) => api.post('/projects', data);
 export const getProjectById = (id) => api.get(`/projects/${id}`);
-export const applyToProject = (id) => api.post(`/projects/${id}/apply`);
+export const applyToProject = (projectId) => api.post('/applications', { projectId }); // Изменяем на POST /applications
+
+// Заявки
+export const getApplications = (params = {}) => api.get('/applications', { params }); // Добавляем получение заявок
+
+// Отделы
 export const getDepartments = () => api.get('/departments');
 
-
+// Аккаунт
 export const getAccount = (userId) => api.get(`/account?userId=${userId}`);
-
 export const updateAccount = (userId, department_id, description) => {
   return api.post('/account/department', {
     userId,
