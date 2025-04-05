@@ -13,5 +13,5 @@ router.get('/projects', async (req, res) => {
   }
 });
 router.post('/projects', projectController.createProject);
-
+router.get('/projects/department', projectController.getProjectsByDepartment);
 module.exports = router;

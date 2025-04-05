@@ -27,16 +27,36 @@ exports.getProjectsByUser = async (req, res) => {
 };
 
 // GET /projects/user/:userId - Возвращает проекты, созданные конкретным пользователем (через URL параметр)
-exports.getProjectsByUserParam = async (req, res) => {
-  const { userId } = req.params;
-  if (!userId) {
-    return res.status(400).json({ error: 'userId parameter is required' });
+// exports.getProjectsByUserParam = async (req, res) => {
+//   const { userId } = req.params;
+//   if (!userId) {
+//     return res.status(400).json({ error: 'userId parameter is required' });
+//   }
+//   try {
+//     const result = await db.query('SELECT * FROM projects WHERE company_user_id = $1', [userId]);
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error('Error fetching projects by user id:', err);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
+
+
+// GET /projects/department?departmentId=<id>
+// Возвращает проекты для указанного departmentId
+exports.getProjectsByDepartment = async (req, res) => {
+  const { departmentId } = req.query;
+  if (!departmentId) {
+    return res.status(400).json({ error: 'departmentId query parameter is required' });
   }
   try {
-    const result = await db.query('SELECT * FROM projects WHERE company_user_id = $1', [userId]);
+    const result = await db.query(
+      'SELECT * FROM projects WHERE department_id = $1',
+      [departmentId]
+    );
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching projects by user id:', err);
+    console.error('Error fetching projects by department:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
