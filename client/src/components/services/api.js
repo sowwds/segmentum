@@ -26,7 +26,7 @@ export const getProjects = (params = {}) => api.get('/projects', { params });
 export const getProjectById = (id) => api.get(`/projects/${id}`);
 
 export const createProject = (data) => api.post('/projects', data);
-export const updateProject = (id, data) => api.put(`/projects?id=${id}`, data); // Добавляем функцию редактирования
+export const updateProject = (id, data) => api.put(`/projects?id=${id}`, data);
 
 
 // Заявки
@@ -35,7 +35,7 @@ export const getApplications = (params = {}) => api.get('/applications', { param
 export const applyToProject = (project_id, student_id, status = 'pending') => {
     return api.post('/applications', { project_id, student_id, status });
   };
-export const approveApplication = (id) => api.put(`/applications?id=${id}`, { status: 'approved' }); // Предполагаем обновление статуса
+export const approveApplication = (id) => api.put(`/applications?id=${id}`, { status: 'approved' });
 
 // Отделы
 export const getDepartments = () => api.get('/departments');

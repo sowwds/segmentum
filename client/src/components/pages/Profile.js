@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../App';
 import { useNavigate } from 'react-router-dom';
-import { getAccount, updateAccount, getDepartments } from '../services/api'; // Импорт из api.js
+import { getAccount, updateAccount, getDepartments } from '../services/api';
 import './Profile.css';
 
 const Profile = () => {
@@ -10,12 +10,12 @@ const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [description, setDescription] = useState(''); // Для редактирования описания
-  const [departmentId, setDepartmentId] = useState(''); // Для выбора отдела
-  const [isEditing, setIsEditing] = useState(false); // Режим редактирования
-  const [departments, setDepartments] = useState([]); // Динамический список отделов
+  const [description, setDescription] = useState('');
+  const [departmentId, setDepartmentId] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [departments, setDepartments] = useState([]);
 
-  // Функция для загрузки данных профиля и отделов
+
   const fetchData = async () => {
     if (!user || !user.id) {
       setError('Пользователь не авторизован');
@@ -32,7 +32,7 @@ const Profile = () => {
       setProfileData(profileResponse.data);
       setDescription(profileResponse.data.description || '');
       setDepartmentId(profileResponse.data.department_id || '');
-      setDepartments(deptResponse.data); // Предполагаем, что бэкенд возвращает массив [{ id, name }, ...]
+      setDepartments(deptResponse.data);
       setLoading(false);
     } catch (err) {
       console.error('Ошибка при загрузке данных:', err);
@@ -56,7 +56,7 @@ const Profile = () => {
     }
   };
 
-  // Выполняем загрузку данных при монтировании компонента
+
   useEffect(() => {
     fetchData();
   }, [user]);

@@ -55,7 +55,7 @@ const Projects = () => {
       setProject(response.data[0]);
     } else {
       const applicationsResponse = await getApplications({ userId: user.id });
-      const myProjectsResponse = await getProjects({ userId: user.id }); // Студент: проекты по userId
+      const myProjectsResponse = await getProjects({ userId: user.id });
       const allProjectsResponse = await getProjects({ departmentId: user.department_id });
       const initializedProjects = allProjectsResponse.data.filter(
         (proj) => proj.status === 'initialized'
@@ -71,9 +71,9 @@ const Projects = () => {
       const response = await getProjects({ id });
       setProject(response.data[0]);
     } else {
-      const myProjectsResponse = await getProjects({ companyId: user.id }); // Компания: проекты по companyId
+      const myProjectsResponse = await getProjects({ companyId: user.id });
       setMyProjects(myProjectsResponse.data);
-      setAvailableProjects([]); // Компания не видит доступные проекты
+      setAvailableProjects([]);
     }
   };
 

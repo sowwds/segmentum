@@ -86,14 +86,6 @@ function App() {
               }
             />
             <Route
-              path="/projects/new"
-              element={
-                <PrivateRoute>
-                  <Projects />
-                </PrivateRoute>
-              }
-            />
-            <Route
               path="/projects/:id"
               element={
                 <PrivateRoute>

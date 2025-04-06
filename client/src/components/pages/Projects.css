@@ -53,9 +53,9 @@
 .project-list {
     width: 100%;
     margin-top: 20px;
-    display: flex; /* Используем flex для сетки */
-    flex-wrap: wrap; /* Перенос элементов */
-    gap: 10px; /* Расстояние между элементами */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .project-item,
@@ -63,8 +63,8 @@
     background-color: #333;
     border-radius: 10px;
     padding: 10px;
-    flex: 1 1 calc(33.33% - 10px); /* Каждый элемент занимает треть ширины минус отступ */
-    min-width: 200px; /* Минимальная ширина для читаемости */
+    flex: 1 1 calc(33.33% - 10px);
+    min-width: 200px;
     box-sizing: border-box;
 }
 
@@ -79,6 +79,6 @@
 }
 
 .button-container button {
-    width: 150px; /* Фиксированная ширина для всех кнопок */
-    text-align: center; /* Центрируем текст */
+    width: 150px;
+    text-align: center;
 }

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../App';
 import { logoutUser } from '../services/authService';
 import './header.css';
@@ -26,6 +26,7 @@ const Header = () => {
       <>
         <a href="/dashboard">Главная</a>
         <a href="/projects">Проекты</a>
+        <a href="/profile">Профиль</a>
       </>
     );
 
@@ -36,21 +37,18 @@ const Header = () => {
         return (
           <>
             {commonLinks}
-              <a href="/profile">Профиль</a>
           </>
         );
       case 'company':
         return (
             <>
               {commonLinks}
-                <a href="/profile">Профиль</a>
             </>
           );
       case 'head_of_department':
         return (
             <>
               {commonLinks}
-                <a href="/profile">Профиль</a>
             </>
           );
       case 'admin':
