@@ -21,18 +21,6 @@ router.get('/projects', async (req, res) => {
   }
 });
 
-/*
-  POST /projects
-  Создает новый проект.
-  Ожидается, что тело запроса содержит JSON с полями:
-    - title (обязательно)
-    - description
-    - department_id
-    - company_user_id (обязательно)
-    - status
-    - price
-    - start_date (опционально; если не передан, используется текущая дата)
-*/
 router.post('/projects', projectController.createProject);
 router.put('/projects', projectController.updateProject);
 

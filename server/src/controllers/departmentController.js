@@ -1,7 +1,6 @@
 const db = require('../config/db');
 
 // GET /departments
-// Возвращает список всех факультетов (departments) с полями id, name, description и head
 exports.getDepartments = async (req, res) => {
   try {
     const result = await db.query('SELECT id, name, description, head FROM departments');

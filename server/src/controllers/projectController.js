@@ -1,7 +1,6 @@
 const db = require('../config/db');
 
 // GET /projects?companyId=<id>
-// Возвращает проекты, созданные конкретной компанией (по company_user_id)
 exports.getProjectsByCompany = async (req, res) => {
   const { companyId } = req.query;
   if (!companyId) {
@@ -28,7 +27,6 @@ exports.getProjectsByCompany = async (req, res) => {
 
 
 // GET /projects?userId=<id>
-// Возвращает проекты, в которых участвует студент. Для этого делается join с таблицей applications.
 exports.getProjectsByUser = async (req, res) => {
   const { userId } = req.query;
   if (!userId) {
@@ -50,7 +48,6 @@ exports.getProjectsByUser = async (req, res) => {
 };
 
 // GET /projects
-// Если ни companyId, ни userId не переданы, возвращаем все проекты
 exports.getAllProjects = async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM projects');
@@ -70,7 +67,6 @@ exports.createProject = async (req, res) => {
   }
   
   try {
-    // Если start_date не передан, используем текущую дату
     const projectStartDate = start_date || new Date();
     const result = await db.query(
       `INSERT INTO projects 

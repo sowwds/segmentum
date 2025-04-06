@@ -2,26 +2,24 @@
 
 const express = require('express');
 const session = require('express-session');
-const passport = require('./config/passport'); // Импорт настроенного Passport
+const passport = require('./config/passport'); 
 const cors = require('cors')
 const app = express();
 require('dotenv').config();
-// Разбор JSON-тел запросов
+
 app.use(express.json());
 
 app.use(cors());
 
-// Если нужно настроить конкретные опции:
 
 const corsOptions = {
-  origin: 'http://localhost:3000', // Разрешаем запросы только с этого адреса (фронтенд)
+  origin: 'http://localhost:3000', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true, // Если нужно передавать куки
+  credentials: true, 
   optionsSuccessStatus: 204
 };
 app.use(cors(corsOptions));
 
-// Настройка сессий (используем secret из переменных окружения)
 app.use(session({
   secret: process.env.SESSION_SECRET || 'some_secret_key',
   resave: false,

@@ -1,7 +1,6 @@
 const db = require('../config/db');
 
 // POST /applications
-// Создает новую заявку и возвращает созданную запись
 exports.createApplication = async (req, res) => {
   const { project_id, student_id, status } = req.body;
 
@@ -10,7 +9,6 @@ exports.createApplication = async (req, res) => {
   }
 
   try {
-    // Проверяем, существует ли уже заявка для данного проекта от этого студента
     const checkResult = await db.query(
       'SELECT * FROM applications WHERE project_id = $1 AND student_id = $2',
       [project_id, student_id]
@@ -19,7 +17,6 @@ exports.createApplication = async (req, res) => {
       return res.status(400).json({ error: 'Application already exists for this project and student' });
     }
 
-    // Если заявки нет, создаем новую
     const result = await db.query(
       'INSERT INTO applications (project_id, student_id, status) VALUES ($1, $2, $3) RETURNING *',
       [project_id, student_id, status]
@@ -30,8 +27,8 @@ exports.createApplication = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 // GET /applications
-// Возвращает список всех заявок из таблицы applications
 exports.getApplications = async (req, res) => {
   try {
     const { userId } = req.query;
@@ -52,7 +49,6 @@ exports.getApplications = async (req, res) => {
   }
 };
 // GET /applications?projectId=<id>
-// Возвращает заявки для конкретного проекта
 exports.getApplicationsByProject = async (req, res) => {
   const { projectId } = req.query;
   if (!projectId) {
@@ -68,8 +64,6 @@ exports.getApplicationsByProject = async (req, res) => {
 };
 
 // POST /applications?id=<applicationId>
-// Обновляет (например, утверждает) заявку с указанным id.
-// Ожидается, что в теле запроса придёт поле "status" для обновления.
 exports.updateApplicationStatus = async (req, res) => {
   const { id } = req.query;
   const { status } = req.body;
@@ -110,7 +104,6 @@ exports.updateApplicationStatusPut = async (req, res) => {
   }
   
   try {
-    // Обновляем статус заявки
     const result = await db.query(
       'UPDATE applications SET status = $1 WHERE id = $2 RETURNING *',
       [status, id]
@@ -122,7 +115,6 @@ exports.updateApplicationStatusPut = async (req, res) => {
     
     const application = result.rows[0];
 
-    // Если заявка одобрена, добавляем student_id в массив projects.students_id
     if (status === 'approved') {
       await db.query(
         'UPDATE projects SET students_id = array_append(students_id, $1) WHERE id = $2',
