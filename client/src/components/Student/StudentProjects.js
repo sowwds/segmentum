@@ -22,6 +22,12 @@ const StudentProjects = ({ project, applications, myProjects, availableProjects,
           <p><label>Статус:</label> {project.status}</p>
           <p><label>Цена:</label> {project.price} руб.</p>
           <p><label>Дата начала:</label> {new Date(project.start_date).toLocaleDateString()}</p>
+          <p>
+            <label>Студенты:</label>{' '}
+            {project.students_id && project.students_id.length > 0
+              ? project.students_id.join(', ')
+              : 'Нет студентов'}
+          </p>
           <div className="button-container">
             {project.status === 'initialized' && (
               <button className="cta-button" onClick={() => handleApply(project.id)}>
@@ -31,11 +37,11 @@ const StudentProjects = ({ project, applications, myProjects, availableProjects,
             <button
               className="cta-button secondary"
               onClick={() => {
-                setProject(null); // Сбрасываем проект
+                setProject(null);
                 navigate('/projects');
               }}
             >
-              назад к списку
+              Назад к списку
             </button>
           </div>
         </div>

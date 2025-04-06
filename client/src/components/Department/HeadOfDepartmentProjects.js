@@ -39,6 +39,7 @@ const HeadOfDepartmentProjects = ({ project: initialProject, availableProjects, 
   };
 
   if (project) {
+    console.log(project)
     return (
       <div className="card">
         <h2>{project.title}</h2>
@@ -47,7 +48,12 @@ const HeadOfDepartmentProjects = ({ project: initialProject, availableProjects, 
           <p><label>Статус:</label> {project.status}</p>
           <p><label>Цена:</label> {project.price} руб.</p>
           <p><label>Дата начала:</label> {new Date(project.start_date).toLocaleDateString()}</p>
-
+          <p>
+            <label>Студенты:</label>{' '}
+            {project.students_id && project.students_id.length > 0
+              ? project.students_id.join(', ')
+              : 'Нет студентов'}
+          </p>
           <h3>Заявки на проект</h3>
           <div className="project-list">
             {loadingApplications ? (
@@ -55,7 +61,7 @@ const HeadOfDepartmentProjects = ({ project: initialProject, availableProjects, 
             ) : applications.length > 0 ? (
               applications.map((app) => (
                 <div key={app.id} className="application-item">
-                  <p><label>Студент ID:</label> {app.student_id}</p>
+                  <p><label>Студент ID:</label> {app.students_id}</p>
                   <p><label>Статус заявки:</label> {app.status}</p>
                   {app.status === 'pending' && (
                     <button
@@ -76,12 +82,12 @@ const HeadOfDepartmentProjects = ({ project: initialProject, availableProjects, 
             <button
               className="cta-button secondary"
               onClick={() => {
-                setProject(null); // Сбрасываем глобальный проект
-                setLocalProject(null); // Сбрасываем локальный проект
+                setProject(null);
+                setLocalProject(null);
                 navigate('/projects');
               }}
             >
-              Назад
+              Назад к списку
             </button>
           </div>
         </div>

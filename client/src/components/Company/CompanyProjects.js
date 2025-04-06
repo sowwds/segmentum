@@ -46,7 +46,6 @@ const CompanyProjects = ({ project: initialProject, myProjects, user, navigate, 
   const handleUpdateProject = async () => {
     try {
       await updateProject(project.id, formData);
-      console.log(project.id, formData);
       alert('Проект успешно обновлен!');
       setLocalProject({ ...project, ...formData });
       setIsEditing(false);
@@ -78,6 +77,12 @@ const CompanyProjects = ({ project: initialProject, myProjects, user, navigate, 
           <p><label>Статус:</label> {project.status}</p>
           <p><label>Цена:</label> {project.price} руб.</p>
           <p><label>Дата начала:</label> {new Date(project.start_date).toLocaleDateString()}</p>
+          <p>
+            <label>Студенты:</label>{' '}
+            {project.students_id && project.students_id.length > 0
+              ? project.students_id.join(', ')
+              : 'Нет студентов'}
+          </p>
           <div className="button-container">
             <button className="cta-button" onClick={startEditing}>
               Редактировать
@@ -85,12 +90,12 @@ const CompanyProjects = ({ project: initialProject, myProjects, user, navigate, 
             <button
               className="cta-button secondary"
               onClick={() => {
-                setProject(null); // Сбрасываем глобальный проект
-                setLocalProject(null); // Сбрасываем локальный проект
+                setProject(null);
+                setLocalProject(null);
                 navigate('/projects');
               }}
             >
-              Назад
+              Назад к списку
             </button>
           </div>
         </div>
