@@ -76,8 +76,12 @@ exports.createProject = async (req, res) => {
 };
 
 exports.updateProject = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.query;
   const { title, description, department_id, company_user_id, status, price, start_date } = req.body;
+  
+  if (!id) {
+    return res.status(400).json({ error: 'Project id is required in query parameter' });
+  }
   
   try {
     const result = await db.query(

@@ -191,7 +191,7 @@ POST http://localhost:5000/projects
 Update an existing project by its id. Only the provided fields will be updated (others will remain unchanged). **URL:**
 
 ```
-PUT http://localhost:5000/projects/1
+PUT http://localhost:5000/projects?Id=?
 ```
 
 **Headers:**
