@@ -34,5 +34,6 @@ router.get('/projects', async (req, res) => {
     - start_date (опционально; если не передан, используется текущая дата)
 */
 router.post('/projects', projectController.createProject);
+router.put('/projects/:id', projectController.updateProject);
 
 module.exports = router;

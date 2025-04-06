@@ -74,3 +74,33 @@ exports.createProject = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+exports.updateProject = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, department_id, company_user_id, status, price, start_date } = req.body;
+  
+  try {
+    const result = await db.query(
+      `UPDATE projects
+       SET title = COALESCE($1, title),
+           description = COALESCE($2, description),
+           department_id = COALESCE($3, department_id),
+           company_user_id = COALESCE($4, company_user_id),
+           status = COALESCE($5, status),
+           price = COALESCE($6, price),
+           start_date = COALESCE($7, start_date)
+       WHERE id = $8
+       RETURNING *`,
+      [title, description, department_id, company_user_id, status, price, start_date, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error('Error updating project:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

@@ -185,6 +185,42 @@ POST http://localhost:5000/projects
   "start_date": "2023-03-27"
 }
 ```
+### PUT /projects/:id
+
+**Description:**  
+Update an existing project by its id. Only the provided fields will be updated (others will remain unchanged). **URL:**
+
+```
+PUT http://localhost:5000/projects/1
+```
+
+**Headers:**
+
+- `Content-Type: application/json` **Example Request Body:**
+    
+
+```json
+{
+  "title": "Updated Project Title",
+  "description": "Updated project description",
+  "status": "active"
+}
+```
+
+**Example Response:**
+
+```json
+{
+  "id": 1,
+  "title": "Updated Project Title",
+  "description": "Updated project description",
+  "department_id": 1,
+  "company_user_id": 1,
+  "status": "active",
+  "price": 10000,
+  "start_date": "2023-03-27"
+}
+```
 
 ---
 
