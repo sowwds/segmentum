@@ -3,17 +3,17 @@
 **Description:**  
 Retrieve full account information.  
 **URL:**  
-```
 
-GET [http://localhost:5000/account?userId=](http://localhost:3000/account?userId=)<user_id>
 
-```
+GET [http://localhost:5000/account?userId=](http://localhost:5000/account?userId=)<user_id>
+
+
 **Example Request:**  
+
+
+GET [http://localhost:5000/account?userId=1](http://localhost:5000/account?userId=1)
+
 ```
-
-GET [http://localhost:5000/account?userId=1](http://localhost:3000/account?userId=1)
-
-````
 **Example Response:**
 ```json
 {
