@@ -110,6 +110,7 @@ exports.updateApplicationStatusPut = async (req, res) => {
   }
   
   try {
+    // Обновляем статус заявки
     const result = await db.query(
       'UPDATE applications SET status = $1 WHERE id = $2 RETURNING *',
       [status, id]
@@ -119,7 +120,17 @@ exports.updateApplicationStatusPut = async (req, res) => {
       return res.status(404).json({ error: 'Application not found' });
     }
     
-    res.json(result.rows[0]);
+    const application = result.rows[0];
+
+    // Если заявка одобрена, добавляем student_id в массив projects.students_id
+    if (status === 'approved') {
+      await db.query(
+        'UPDATE projects SET students_id = array_append(students_id, $1) WHERE id = $2',
+        [application.student_id, application.project_id]
+      );
+    }
+    
+    res.json(application);
   } catch (err) {
     console.error('Error updating application status:', err);
     res.status(500).json({ error: 'Internal server error' });

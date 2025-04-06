@@ -8,13 +8,24 @@ exports.getProjectsByCompany = async (req, res) => {
     return res.status(400).json({ error: 'companyId query parameter is required' });
   }
   try {
-    const result = await db.query('SELECT * FROM projects WHERE company_user_id = $1', [companyId]);
+    const query = `
+      SELECT p.*,
+             (
+               SELECT json_agg(json_build_object('id', u.id, 'name', u.name, 'email', u.email))
+               FROM users u
+               WHERE u.id = ANY(p.students_id)
+             ) AS students
+      FROM projects p
+      WHERE p.company_user_id = $1
+    `;
+    const result = await db.query(query, [companyId]);
     res.json(result.rows);
   } catch (err) {
     console.error('Error fetching projects by company:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 // GET /projects?userId=<id>
 // Возвращает проекты, в которых участвует студент. Для этого делается join с таблицей applications.

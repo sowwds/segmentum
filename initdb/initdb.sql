@@ -31,9 +31,11 @@ CREATE TABLE IF NOT EXISTS projects (
   department_id INTEGER REFERENCES departments(id),
   company_user_id INTEGER REFERENCES users(id),
   status VARCHAR(50),
-  price BIGINT,              
-  start_date DATE            
+  price BIGINT,
+  start_date DATE,
+  students_id INTEGER[] DEFAULT '{}'
 );
+
 
 -- 5. Создаем таблицу заявок (applications)
 CREATE TABLE IF NOT EXISTS applications (
