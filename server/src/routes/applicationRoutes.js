@@ -21,4 +21,6 @@ router.get('/applications', (req, res) => {
     // Если не передан projectId, можно вернуть ошибку или все заявки
     return res.status(400).json({ error: 'projectId query parameter is required' });
   });
+
+router.put('/applications', applicationController.updateApplicationStatusPut);
 module.exports = router;
