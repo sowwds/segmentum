@@ -1,20 +1,19 @@
-# API usage for backend
-## 1. Account Endpoints
 
 ### GET /account
 **Description:**  
-Retrieve full account information. If a user is not found, default values are returned (role: "student", description: "", department_id: 0).
-
+Retrieve full account information.  
 **URL:**  
 ```
-http://localhost:5000/account?userId=<user_id>
-```
 
+GET [http://localhost:5000/account?userId=](http://localhost:3000/account?userId=)<user_id>
+
+```
 **Example Request:**  
 ```
-http://localhost:5000/account?userId=1
-```
 
+GET [http://localhost:5000/account?userId=1](http://localhost:3000/account?userId=1)
+
+````
 **Example Response:**
 ```json
 {
@@ -25,20 +24,22 @@ http://localhost:5000/account?userId=1
   "description": "",
   "department_id": 0
 }
-```
-### POST /account/department
-**Description:**  
-Update the account with department information and description.
+````
 
-**URL:**  
+### POST /account/department
+
+**Description:**  
+Update the account with department information and description. **URL:**
+
 ```
 POST http://localhost:5000/account/department
 ```
 
-**Headers:**  
-- `Content-Type: application/json`
+**Headers:**
 
-**Example Request Body:**
+- `Content-Type: application/json` **Example Request Body:**
+    
+
 ```json
 {
   "userId": 1,
@@ -48,6 +49,7 @@ POST http://localhost:5000/account/department
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -66,14 +68,14 @@ POST http://localhost:5000/account/department
 ### GET /departments
 
 **Description:**  
-Retrieve a list of all departments.
+Retrieve a list of all departments. **URL:**
 
-**URL:**  
 ```
 GET http://localhost:5000/departments
 ```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -96,20 +98,37 @@ GET http://localhost:5000/departments
 ## 3. Projects Endpoints
 
 ### GET /projects
-**Description:**  
-Retrieve projects. If the query parameter `userId` is provided, returns projects created by that user.
 
-**URL Examples:**
-- All projects:
-  ```
-  GET http://localhost:5000/projects
-  ```
-- Projects by a specific user:
-  ```
-  GET http://localhost:5000/projects?userId=1
-  ```
+**Description:**  
+Retrieve projects. The results can be filtered by different query parameters:
+
+- **By userId:** Returns projects where the student has an application.
+    
+    ```
+    GET http://localhost:5000/projects?userId=2
+    ```
+    
+- **By companyId:** Returns projects created by the specified company.
+    
+    ```
+    GET http://localhost:5000/projects?companyId=1
+    ```
+    
+- **By departmentId:** Returns projects belonging to a specific department.
+    
+    ```
+    GET http://localhost:5000/projects?departmentId=3
+    ```
+    
+- **Without filters:** Returns all projects.
+    
+    ```
+    GET http://localhost:5000/projects
+    ```
+    
 
 **Example Response:**
+
 ```json
 [
   {
@@ -125,44 +144,21 @@ Retrieve projects. If the query parameter `userId` is provided, returns projects
 ]
 ```
 
-### GET /projects/department
-**Description:**  
-Retrieve projects filtered by departmentId.
-
-**URL Example:**
-```
-GET http://localhost:5000/projects/department?departmentId=2
-```
-
-**Example Response:**
-```json
-[
-  {
-    "id": 2,
-    "title": "Department Project",
-    "description": "Project for department 2",
-    "department_id": 2,
-    "company_user_id": 2,
-    "status": "active",
-    "price": 20000,
-    "start_date": "2023-04-01"
-  }
-]
-```
-
 ### POST /projects
-**Description:**  
-Create a new project.
 
-**URL:**  
+**Description:**  
+Create a new project.  
+**URL:**
+
 ```
 POST http://localhost:5000/projects
 ```
 
-**Headers:**  
-- `Content-Type: application/json`
+**Headers:**
 
-**Example Request Body:**
+- `Content-Type: application/json` **Example Request Body:**
+    
+
 ```json
 {
   "title": "New Project",
@@ -176,6 +172,7 @@ POST http://localhost:5000/projects
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -193,23 +190,17 @@ POST http://localhost:5000/projects
 
 ## 4. Applications Endpoints
 
-### GET /applications
-**Description:**  
-Retrieve applications.  
-- If the query parameter `userId` is provided, returns applications for that user (where `student_id` equals `userId`).  
-- Otherwise, returns all applications.
+### GET /applications?projectId=
 
-**URL Examples:**
-- All applications:
-  ```
-  GET http://localhost:5000/applications
-  ```
-- Applications for a specific user:
-  ```
-  GET http://localhost:5000/applications?userId=2
-  ```
+**Description:**  
+Retrieve all applications for a specific project. **URL Example:**
+
+```
+GET http://localhost:5000/applications?projectId=1
+```
 
 **Example Response:**
+
 ```json
 [
   {
@@ -222,18 +213,30 @@ Retrieve applications.
 ```
 
 ### POST /applications
-**Description:**  
-Create a new application.
 
-**URL:**  
+**Description:**  
+This endpoint is used in two ways:
+
+1. **Creation of a new application:**  
+    If no query parameter `id` is provided, it creates a new application.
+    
+2. **Updating an existing application:**  
+    If a query parameter `id` is provided, it updates (e.g., approves) the existing application.
+    
+
+#### 4.1. Creating a New Application
+
+**URL:**
+
 ```
 POST http://localhost:5000/applications
 ```
 
-**Headers:**  
-- `Content-Type: application/json`
+**Headers:**
 
-**Example Request Body:**
+- `Content-Type: application/json` **Example Request Body:**
+    
+
 ```json
 {
   "project_id": 1,
@@ -243,6 +246,7 @@ POST http://localhost:5000/applications
 ```
 
 **Example Response:**
+
 ```json
 {
   "id": 1,
@@ -251,3 +255,34 @@ POST http://localhost:5000/applications
   "status": "pending"
 }
 ```
+
+#### 4.2. Updating (Approving) an Application
+
+**URL:**
+
+```
+POST http://localhost:5000/applications?id=1
+```
+
+**Headers:**
+
+- `Content-Type: application/json` **Example Request Body:**
+    
+
+```json
+{
+  "status": "approved"
+}
+```
+
+**Example Response:**
+
+```json
+{
+  "id": 1,
+  "project_id": 1,
+  "student_id": 2,
+  "status": "approved"
+}
+```
+

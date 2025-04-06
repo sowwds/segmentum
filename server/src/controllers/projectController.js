@@ -1,62 +1,51 @@
 const db = require('../config/db');
 
-// GET /projects - Возвращает все проекты
-exports.getAllProjects = async (req, res) => {
+// GET /projects?companyId=<id>
+// Возвращает проекты, созданные конкретной компанией (по company_user_id)
+exports.getProjectsByCompany = async (req, res) => {
+  const { companyId } = req.query;
+  if (!companyId) {
+    return res.status(400).json({ error: 'companyId query parameter is required' });
+  }
   try {
-    const result = await db.query('SELECT * FROM projects');
+    const result = await db.query('SELECT * FROM projects WHERE company_user_id = $1', [companyId]);
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching projects:', err);
+    console.error('Error fetching projects by company:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-// GET /projects?userId=<id> - Возвращает проекты, созданные конкретным пользователем (через query параметр)
+// GET /projects?userId=<id>
+// Возвращает проекты, в которых участвует студент. Для этого делается join с таблицей applications.
 exports.getProjectsByUser = async (req, res) => {
   const { userId } = req.query;
   if (!userId) {
     return res.status(400).json({ error: 'userId query parameter is required' });
   }
   try {
-    const result = await db.query('SELECT * FROM projects WHERE company_user_id = $1', [userId]);
+    const result = await db.query(
+      `SELECT p.* 
+       FROM projects p 
+       JOIN applications a ON p.id = a.project_id 
+       WHERE a.student_id = $1`,
+      [userId]
+    );
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching projects by user:', err);
+    console.error('Error fetching projects for user:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-// GET /projects/user/:userId - Возвращает проекты, созданные конкретным пользователем (через URL параметр)
-// exports.getProjectsByUserParam = async (req, res) => {
-//   const { userId } = req.params;
-//   if (!userId) {
-//     return res.status(400).json({ error: 'userId parameter is required' });
-//   }
-//   try {
-//     const result = await db.query('SELECT * FROM projects WHERE company_user_id = $1', [userId]);
-//     res.json(result.rows);
-//   } catch (err) {
-//     console.error('Error fetching projects by user id:', err);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
-
-
-// GET /projects/department?departmentId=<id>
-// Возвращает проекты для указанного departmentId
-exports.getProjectsByDepartment = async (req, res) => {
-  const { departmentId } = req.query;
-  if (!departmentId) {
-    return res.status(400).json({ error: 'departmentId query parameter is required' });
-  }
+// GET /projects
+// Если ни companyId, ни userId не переданы, возвращаем все проекты
+exports.getAllProjects = async (req, res) => {
   try {
-    const result = await db.query(
-      'SELECT * FROM projects WHERE department_id = $1',
-      [departmentId]
-    );
+    const result = await db.query('SELECT * FROM projects');
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching projects by department:', err);
+    console.error('Error fetching projects:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
