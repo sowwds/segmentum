@@ -6,7 +6,7 @@ import StudentProjects from '../Student/StudentProjects';
 import CompanyProjects from '../Company/CompanyProjects';
 import HeadOfDepartmentProjects from '../Department/HeadOfDepartmentProjects';
 import { Container } from 'react-bootstrap';
-import './Projects.css';
+import '../pages/Projects.css';
 
 const Projects = () => {
   const { user } = useContext(AuthContext);
@@ -55,7 +55,7 @@ const Projects = () => {
       setProject(response.data[0]);
     } else {
       const applicationsResponse = await getApplications({ userId: user.id });
-      const myProjectsResponse = await getProjects({ userId: user.id });
+      const myProjectsResponse = await getProjects({ userId: user.id }); // Студент: проекты по userId
       const allProjectsResponse = await getProjects({ departmentId: user.department_id });
       const initializedProjects = allProjectsResponse.data.filter(
         (proj) => proj.status === 'initialized'
@@ -71,12 +71,9 @@ const Projects = () => {
       const response = await getProjects({ id });
       setProject(response.data[0]);
     } else {
-      const [myProjectsResponse, allProjectsResponse] = await Promise.all([
-        getProjects({ userId: user.id }),
-        getProjects({}),
-      ]);
+      const myProjectsResponse = await getProjects({ companyId: user.id }); // Компания: проекты по companyId
       setMyProjects(myProjectsResponse.data);
-      setAvailableProjects(allProjectsResponse.data);
+      setAvailableProjects([]); // Компания не видит доступные проекты
     }
   };
 
@@ -90,7 +87,7 @@ const Projects = () => {
     }
   };
 
-const renderContent = () => {
+  const renderContent = () => {
     if (!user) return null;
     if (loading) return <p>Загрузка...</p>;
 
@@ -104,7 +101,7 @@ const renderContent = () => {
             availableProjects={availableProjects}
             user={user}
             navigate={navigate}
-            setProject={setProject} // Передаем setProject
+            setProject={setProject}
           />
         );
       case 'company':
@@ -114,7 +111,7 @@ const renderContent = () => {
             myProjects={myProjects}
             user={user}
             navigate={navigate}
-            setProject={setProject} // Передаем setProject
+            setProject={setProject}
           />
         );
       case 'head_of_department':
@@ -124,7 +121,7 @@ const renderContent = () => {
             availableProjects={availableProjects}
             user={user}
             navigate={navigate}
-            setProject={setProject} // Передаем setProject
+            setProject={setProject}
           />
         );
       default:

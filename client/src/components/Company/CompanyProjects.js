@@ -46,6 +46,7 @@ const CompanyProjects = ({ project: initialProject, myProjects, user, navigate, 
   const handleUpdateProject = async () => {
     try {
       await updateProject(project.id, formData);
+      console.log(project.id, formData);
       alert('Проект успешно обновлен!');
       setLocalProject({ ...project, ...formData });
       setIsEditing(false);
