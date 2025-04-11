@@ -1,22 +1,29 @@
 const db = require('../config/db');
+const { getCached, invalidateCache } = require('../utils/cache');
 
 // GET /account?userId=...
-
 exports.getAccount = async (req, res) => {
-  const userId = req.query.userId;
-  
+  const { userId } = req.query;
+
   try {
     if (userId) {
-      const result = await db.query(
-        'SELECT id, name, email, role, description, department_id FROM users WHERE id = $1',
-        [userId]
-      );
-      if (result.rows.length === 0) {
+      const cacheKey = `account:${userId}`;
+
+      const account = await getCached(cacheKey, async () => {
+        const result = await db.query(
+          'SELECT id, name, email, role, description, department_id FROM users WHERE id = $1',
+          [userId]
+        );
+        return result.rows.length > 0 ? result.rows[0] : null;
+      }, 3600); // 1 час
+
+      if (!account) {
         return res.status(404).json({ error: 'User not found' });
       }
-      return res.json(result.rows[0]);
+
+      res.json(account);
     } else {
-      return res.json({
+      res.json({
         id: null,
         name: '',
         email: '',
@@ -37,13 +44,14 @@ exports.updateDepartment = async (req, res) => {
   console.log('Received updateDepartment:', req.body);
 
   if (!userId) {
-    return res.status(400).json({ error: 'User id is required' });
+    return res.status(400).json({ error: 'userId is required' });
   }
 
   try {
     const result = await db.query(
       `UPDATE users 
-       SET department_id = $1, description = $2 
+       SET department_id = COALESCE($1, department_id), 
+           description = COALESCE($2, description)
        WHERE id = $3 
        RETURNING id, name, email, role, description, department_id`,
       [department_id, description, userId]
@@ -52,6 +60,9 @@ exports.updateDepartment = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    // Инвалидация кэша для аккаунта
+    await invalidateCache(`account:${userId}`);
 
     res.json(result.rows[0]);
   } catch (err) {

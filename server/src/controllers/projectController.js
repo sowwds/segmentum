@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { getCached, invalidateCacheByPrefix } = require('../utils/cache');
 
 // GET /projects?companyId=<id>
 exports.getProjectsByCompany = async (req, res) => {
@@ -7,6 +8,7 @@ exports.getProjectsByCompany = async (req, res) => {
     return res.status(400).json({ error: 'companyId query parameter is required' });
   }
   try {
+    const cacheKey = `projects:company:${companyId}`;
     const query = `
       SELECT p.*,
              (
@@ -17,8 +19,13 @@ exports.getProjectsByCompany = async (req, res) => {
       FROM projects p
       WHERE p.company_user_id = $1
     `;
-    const result = await db.query(query, [companyId]);
-    res.json(result.rows);
+
+    const projects = await getCached(cacheKey, async () => {
+      const result = await db.query(query, [companyId]);
+      return result.rows;
+    }, 600); // 10 минут
+
+    res.json(projects);
   } catch (err) {
     console.error('Error fetching projects by company:', err);
     res.status(500).json({ error: 'Internal server error' });
@@ -33,25 +40,36 @@ exports.getProjectsByUser = async (req, res) => {
     return res.status(400).json({ error: 'userId query parameter is required' });
   }
   try {
-    const result = await db.query(
-      `SELECT p.* 
-       FROM projects p 
-       JOIN applications a ON p.id = a.project_id 
-       WHERE a.student_id = $1`,
-      [userId]
-    );
-    res.json(result.rows);
+    const cacheKey = `projects:user:${userId}`;
+
+    const projects = await getCached(cacheKey, async () => {
+      const result = await db.query(
+        `SELECT p.* 
+         FROM projects p 
+         JOIN applications a ON p.id = a.project_id 
+         WHERE a.student_id = $1`,
+        [userId]
+      );
+      return result.rows;
+    }, 600); // 10 минут
+
+    res.json(projects);
   } catch (err) {
     console.error('Error fetching projects for user:', err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-
 // GET /projects
 exports.getAllProjects = async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM projects');
-    res.json(result.rows);
+    const cacheKey = 'projects:all';
+
+    const projects = await getCached(cacheKey, async () => {
+      const result = await db.query('SELECT * FROM projects');
+      return result.rows;
+    }, 600); // 10 минут
+
+    res.json(projects);
   } catch (err) {
     console.error('Error fetching projects:', err);
     res.status(500).json({ error: 'Internal server error' });
@@ -63,7 +81,7 @@ exports.createProject = async (req, res) => {
   const { title, description, department_id, company_user_id, status, price, start_date } = req.body;
   
   if (!title || !company_user_id) {
-    return res.status(400).json({ error: 'Title and company_user_id are required' });
+    return res.status(400).json({ error: 'title and company_user_id are required' });
   }
   
   try {
@@ -75,6 +93,9 @@ exports.createProject = async (req, res) => {
        RETURNING *`,
       [title, description, department_id, company_user_id, status, price, projectStartDate]
     );
+
+    await invalidateCacheByPrefix('projects:');
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error('Error creating project:', err);
@@ -82,6 +103,7 @@ exports.createProject = async (req, res) => {
   }
 };
 
+// PUT /projects?id=<id>
 exports.updateProject = async (req, res) => {
   const { id } = req.query;
   const { title, description, department_id, company_user_id, status, price, start_date } = req.body;
@@ -108,7 +130,9 @@ exports.updateProject = async (req, res) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Project not found' });
     }
-    
+
+    await invalidateCacheByPrefix('projects:');
+
     res.json(result.rows[0]);
   } catch (err) {
     console.error('Error updating project:', err);
