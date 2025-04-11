@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { getCached, invalidateCache } = require('../utils/cache');
 
 // POST /applications
 exports.createApplication = async (req, res) => {
@@ -9,10 +10,13 @@ exports.createApplication = async (req, res) => {
   }
 
   try {
+    const cacheKey = `application:${project_id}:${student_id}`;
     const checkResult = await db.query(
       'SELECT * FROM applications WHERE project_id = $1 AND student_id = $2',
       [project_id, student_id]
     );
+    
+    
     if (checkResult.rows.length > 0) {
       return res.status(400).json({ error: 'Application already exists for this project and student' });
     }
@@ -21,6 +25,7 @@ exports.createApplication = async (req, res) => {
       'INSERT INTO applications (project_id, student_id, status) VALUES ($1, $2, $3) RETURNING *',
       [project_id, student_id, status]
     );
+    await invalidateCache(chacheKey);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error('Error creating application:', err);
