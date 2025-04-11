@@ -1,7 +1,7 @@
 const Redis = require('ioredis');
 
 const redis = new Redis({
-  host: 'localhost', // или 'redis' для Docker Compose
+  host: 'redis', // или 'redis' для Docker Compose
   port: 6379,
   // password: 'your_secure_password', // Раскомментируйте, если настроили пароль
   retryStrategy(times) {

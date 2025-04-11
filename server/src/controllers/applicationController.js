@@ -10,11 +10,13 @@ exports.createApplication = async (req, res) => {
   }
 
   try {
-    const cacheKey = `application:${project_id}:${student_id}`;
-    const checkResult = await db.query(
-      'SELECT * FROM applications WHERE project_id = $1 AND student_id = $2',
-      [project_id, student_id]
-    );
+    const checkResult = await getCached(cacheKey, async () => {
+      const checkResult = await db.query(
+        'SELECT * FROM applications WHERE project_id = $1 AND student_id = $2',
+        [project_id, student_id]
+      );
+      return { exists: result.rows.length > 0 };
+    }, 300); // 5 минут
     
     
     if (checkResult.rows.length > 0) {

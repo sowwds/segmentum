@@ -51,6 +51,9 @@ app.get('/', (req, res) => {
 app.post('/test', (req, res) => {
   res.json({ message: 'Test route works!' });
 });
-
+setInterval(() => {
+  const { heapUsed, heapTotal } = process.memoryUsage();
+  console.log(`Node.js Memory: ${Math.round(heapUsed / 1024 / 1024)}MB / ${Math.round(heapTotal / 1024 / 1024)}MB`);
+}, 60000);
 module.exports = app;
 
