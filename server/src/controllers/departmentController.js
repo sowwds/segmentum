@@ -1,8 +1,17 @@
+// src/controllers/departmentController.js
 const db = require('../config/db');
 const { getCached } = require('../utils/cache');
 
 // GET /departments
 exports.getDepartments = async (req, res) => {
+  // **НОВОЕ**: Ограничение доступа по ролям (опционально)
+  // Раскомментируй, если нужно ограничить доступ, например, только для админов
+  /*
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Access denied: Only admins can view departments' });
+  }
+  */
+
   try {
     const cacheKey = 'departments:all';
 

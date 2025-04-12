@@ -150,48 +150,48 @@ exports.updateApplicationStatus = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-// GET /applications?projectId=<id>
-exports.getApplicationsByProject = async (req, res) => {
-  const { projectId } = req.query;
-  if (!projectId) {
-    return res.status(400).json({ error: 'projectId query parameter is required' });
-  }
-  try {
-    const result = await db.query('SELECT * FROM applications WHERE project_id = $1', [projectId]);
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Error fetching applications by project:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
+// // GET /applications?projectId=<id>
+// exports.getApplicationsByProject = async (req, res) => {
+//   const { projectId } = req.query;
+//   if (!projectId) {
+//     return res.status(400).json({ error: 'projectId query parameter is required' });
+//   }
+//   try {
+//     const result = await db.query('SELECT * FROM applications WHERE project_id = $1', [projectId]);
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error('Error fetching applications by project:', err);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
 
-// POST /applications?id=<applicationId>
+// // POST /applications?id=<applicationId>
 
-exports.updateApplicationStatus = async (req, res) => {
-  const { id } = req.query;
-  const { status } = req.body;
+// exports.updateApplicationStatus = async (req, res) => {
+//   const { id } = req.query;
+//   const { status } = req.body;
   
-  if (!id) {
-    return res.status(400).json({ error: 'Application id is required in query parameter' });
-  }
-  if (!status) {
-    return res.status(400).json({ error: 'Status is required in the request body' });
-  }
+//   if (!id) {
+//     return res.status(400).json({ error: 'Application id is required in query parameter' });
+//   }
+//   if (!status) {
+//     return res.status(400).json({ error: 'Status is required in the request body' });
+//   }
   
-  try {
-    const result = await db.query(
-      'UPDATE applications SET status = $1 WHERE id = $2 RETURNING *',
-      [status, id]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Application not found' });
-    }
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error('Error updating application status:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
+//   try {
+//     const result = await db.query(
+//       'UPDATE applications SET status = $1 WHERE id = $2 RETURNING *',
+//       [status, id]
+//     );
+//     if (result.rows.length === 0) {
+//       return res.status(404).json({ error: 'Application not found' });
+//     }
+//     res.json(result.rows[0]);
+//   } catch (err) {
+//     console.error('Error updating application status:', err);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
 
 // PUT /applications/:id - Обновляет статус заявки по её id
 exports.updateApplicationStatusPut = async (req, res) => {

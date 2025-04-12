@@ -1,5 +1,5 @@
 const Redis = require('ioredis');
-const redis = new Redis({ host: 'localhost', port: 6379 });
+const redis = new Redis({ host: 'redis', port: 6379 });
 
 async function getCached(key, fetchFn, ttl = 300) {
   try {
