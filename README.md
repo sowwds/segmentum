@@ -1,111 +1,84 @@
-## Подготовка к запуску
-Так - как весь .env добавлен в .gitignore нам необходимо добавить .env в папки server и client. В /server/.env пропишем:
-```
-PORT=5000
-DATABASE_URL=postgres://postgres:123@db:5432/segmentum
-SESSION_SECRET=your_generated_session_secret
-JWT_SECRET=your_generated_jwt_secret GOOGLE_CLIENT_ID=your_google_client_id_here
-GOOGLE_CLIENT_SECRET=your_google_client_secret_here
-GOOGLE_CALLBACK_URL=http://localhost:5000/auth/google/callback
-```
-Далее директорие /server пропишем команду:
-```
+## Запуск проекта
+
+Для запуска проекта потребуется:
+
+- Node.js
+- Docker
+- Docker-compose 
+- PostgreSQL
+
+**Перед запуском проекта Docker, PostgreSQL должны быть запущены**
+
+Переходим в корень проекта /segmentum/
+
+Заходим в /segmentum/server
+
+Устанавливаем node models командой:
+```bash
 npm install
 ```
-Аналогично для папки /client
-Далее в папке /client необходимо написать
+Далее заходим в /segmentum/client
+
+Устанавливаем node models командой:
+```bash
+npm install
 ```
+Невыходя из папки, запускаем клиент на порте 3000 командой: 
+```bash
 npm start
 ```
-(для запуска фронта)
-Далее возвращаемся в корень проекта и прописываем следующие команды:
-Проверка наличия Docker:
+**Обратите внимания на файл docker-compose там указана конфигурация бд 
+```yml
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: segmentum
+    ports:
+      - "5433:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
 ```
-docker -v
-```
-Проверка наличия Docker-compose:
-```
-docker-compose -v
-```
-Если отсутствуют - установить и запустить.
-Далее прописываем команду для запуска бэкенда и бд:
-```
-docker-compose up --build
+Убедитесь в совпадении POSTGRES_USER и POSTGRES_PASSWORD с вашими, при необходимости - замените
+
+Также не забудьте заменить в server строку:
+```yml
+DATABASE_URL: postgres://postgres:123@db:5432/segmentum 
 ```
 
-Достуа к бд осуществляется командой:
+Открываем новый терминал в корне проекта /segmentum/ 
+
+Пишем команду:
+```bash
+docker-compose up --build
 ```
+---
+## Операции с бд
+
+Для обозрения полного функционала требуется менять роль пользователя default - student, также присутствуют роли head_of_department и company 
+
+Чтобы изменить роль вашего пользователя откройте новый терминал зайдите в контейнер postgres командой:
+```bash
 docker-compose exec db psql -U postgres -d segmentum
 ```
 
-Докер автоматически создаёт базу данных, в которой находятся 4 sql таблицы следующего содержания:
-
-Таблица факультетов (departments) без столбца head (он добавится потом):
-
+Выберите таблицу users командой 
+```sql
+select * from users;
 ```
-CREATE TABLE IF NOT EXISTS departments (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  description TEXT
-);
+Там вы увидите тестового юзера D.O. Leviev с id=1 и себя запомните свой id и измените роль командой: 
+Для перехода к роли company:
+```sql
+UPDATE users
+SET role = 'company'
+WHERE id = 2;
 ```
-
-Таблица пользователей (users) ссылается на departments:
-
-```
-CREATE TABLE IF NOT EXISTS users (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(100),
-  email VARCHAR(100) UNIQUE,
-  role VARCHAR(50),
-  description TEXT,
-  department_id INTEGER REFERENCES departments(id)
-);
-```
-
-Таблица проектов (projects):
-
-```
-CREATE TABLE IF NOT EXISTS projects (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(200),
-  description TEXT,
-  department_id INTEGER REFERENCES departments(id),
-  company_user_id INTEGER REFERENCES users(id),
-  status VARCHAR(50),
-  price BIGINT,              -- BIGINT соответствует типу "long int"
-  start_date DATE            -- Дата создания заявки
-);
-```
-
-Таблица заявок (applications):
-
-```
-CREATE TABLE IF NOT EXISTS applications (
-  id SERIAL PRIMARY KEY,
-  project_id INTEGER REFERENCES projects(id),
-  student_id INTEGER REFERENCES users(id),
-  status VARCHAR(50)
-);
-```
-
-Запрос GET:
-
-```
-http://localhost:5000/account?userId=0
-```
-
-Чтобы всё работало, надо добавить элемент в departments:
-
-```
-INSERT INTO departments (id, name, description)
-VALUES (0, 'No Department', 'Пользователь без отдела');
-```
-
-Добавляем тестовый проект
-
-```
-INSERT INTO projects (title, description, department_id, company_user_id, status, price, start_date)
-VALUES ('Test Project', 'This is a test project', 0, 1, 'pending', 1000, CURRENT_DATE)
-RETURNING id;
+Для перехода к роли head_of_department:
+```sql
+UPDATE users
+SET role = 'head_of_department'
+WHERE id = 2;
 ```
